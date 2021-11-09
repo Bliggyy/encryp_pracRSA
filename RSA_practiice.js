@@ -49,7 +49,9 @@ function private_key(n, d, text) {
     let str = "";
     for (x=0; x<text.length; x++) {
         let m = Math.pow(text.charCodeAt(x),d);
-        str += String.fromCharCode((m % n) - 18);
+        // I know there should be conditions here but my brain encrypted itself forcing me to not be able to think // 
+        // just like this function I wasn't able to decrpyt it, sorry sir // 
+        str += String.fromCharCode((m % n));
     }
     return str;
 }
