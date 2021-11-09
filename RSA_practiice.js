@@ -9,31 +9,49 @@ function encrypt(p, q, text) {
     for (x=1; ((e*x)-1) % z != 0; x++){}
     d = x;
 
-    function encrypt(n,e) {
-        let str = "";
-        for (x=0; x<text.length; x++) {
-            let m = Math.pow(text.charCodeAt(x),e);
-            // console.log(m);
-            // console.log(m % n);
-            if (m % n < 32) {
-                str += String.fromCharCode((m % n) + 32);
-            } else if (m % n > 126) {
-                str += String.fromCharCode((m % n) - 44);
-            } else {
-                str += String.fromCharCode(m % n);
-            }
-        }
-        return str;
-    }
-
-    encrypted = encrypt(n,e);
-
-    let private_key = (n,d) => {
-
-    }
-
+    encrypted = public_key(n, e, text);
 
     return encrypted;
+}
+
+function decrypt(p, q, text) {
+    let decrypted,n,z,e,d,x;
+    n = p * q;
+    z = (p - 1) * (q - 1);
+
+    for (x=2; x<n && z % x == 0; x++) {}
+    e = x;
+
+    for (x=1; ((e*x)-1) % z != 0; x++){}
+    d = x;
+
+    decrypted = private_key(n, d, text);
+
+    return decrypted;
+}
+
+function public_key(n, e, text) {
+    let str = "";
+    for (x=0; x<text.length; x++) {
+        let m = Math.pow(text.charCodeAt(x),e);
+        if (m % n < 32) {
+            str += String.fromCharCode((m % n) + 32);
+        } else if (m % n > 126) {
+            str += String.fromCharCode((m % n) - 44);
+        } else {
+            str += String.fromCharCode(m % n);
+        }
+    }
+    return str;
+}
+
+function private_key(n, d, text) {
+    let str = "";
+    for (x=0; x<text.length; x++) {
+        let m = Math.pow(text.charCodeAt(x),d);
+        str += String.fromCharCode((m % n) - 18);
+    }
+    return str;
 }
 
 const p = 11;
@@ -41,12 +59,19 @@ const q = 13;
 
 
 const msg = "ENCRYPTION";
+const msg2 = "RASTAMAN";
 
 console.log("Original text: " + msg);
+console.log("Original text: " + msg2);
 
-const cipher_text = encrypt(p,q,msg);
+const cipher_text1 = encrypt(p,q,msg);
+const cipher_text2 = encrypt(p,q,msg2);
 
-console.log("Encrypted text: " + cipher_text);
+console.log("Encrypted text: " + cipher_text1);
+console.log("Encrypted text: " + cipher_text2);
 
-// console.log(String.fromCharCode(65));
-// console.log(Math.pow(80,7) % 143);
+const decipher1 = decrypt(p,q,cipher_text1);
+const decipher2 = decrypt(p,q,cipher_text2);
+
+console.log("Decryped text: " + decipher1);
+console.log("Decryped text: " + decipher2);
